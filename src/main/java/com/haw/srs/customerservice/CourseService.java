@@ -21,6 +21,7 @@ public class CourseService {
 
         customer.addCourse(course);
         customerRepository.save(customer);
+        course.incrementAnzahlTeilnehmer();
     }
 
     @Transactional
@@ -46,10 +47,17 @@ public class CourseService {
      * @throws IllegalArgumentException if customerNumber==null or courseNumber==null
      */
     @Transactional
-    public void cancelMembership(CustomerNumber customerNumber, CourseNumber courseNumber) throws CustomerNotFoundException, CourseNotFoundException, MembershipMailNotSent {
+    public void cancelMembership(String lastName, Course course) throws CustomerNotFoundException, CourseNotFoundException, MembershipMailNotSent {
 
         // some implementation goes here
         // find customer, find course, look for membership, remove membership, etc.
+
+        Customer customer = customerRepository
+                .findByLastName(lastName)
+                .orElseThrow(() -> new CustomerNotFoundException(lastName));
+
+        customer.removeCourse(course);
+        customerRepository.delete(customer);
         String customerMail = "customer@domain.com";
 
         boolean mailWasSent = mailGateway.sendMail(customerMail, "Oh, we're sorry that you canceled your membership!", "Some text to make her/him come back again...");
@@ -59,5 +67,6 @@ public class CourseService {
             
             throw new MembershipMailNotSent(customerMail);
         }
+        course.decrementAnzahlTeilnehmer();
     }
 }

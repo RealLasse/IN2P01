@@ -83,7 +83,7 @@ class CourseServiceTest {
         // configure MailGateway-mock
         when(mailGateway.sendMail(anyString(), anyString(), anyString())).thenReturn(true);
 
-        courseService.cancelMembership(new CustomerNumber(1L), new CourseNumber(1L));
+        courseService.cancelMembership("notExisting", new Course("Software Engineering 1"));
     }
 
     @Test
@@ -95,7 +95,7 @@ class CourseServiceTest {
         when(mailGateway.sendMail(anyString(), anyString(), anyString())).thenReturn(false);
 
         assertThatExceptionOfType(MembershipMailNotSent.class)
-                .isThrownBy(() -> courseService.cancelMembership(new CustomerNumber(1L), new CourseNumber(1L)))
+                .isThrownBy(() -> courseService.cancelMembership("notExisting", new Course("Software Engineering 1")))
                 .withMessageContaining("Could not send membership mail to");
     }
     
@@ -107,6 +107,6 @@ class CourseServiceTest {
         // configure MailGateway-mock with BDD-style
         given(mailGateway.sendMail(anyString(), anyString(), anyString())).willReturn(true);
 
-        courseService.cancelMembership(new CustomerNumber(1L), new CourseNumber(1L));
+        courseService.cancelMembership("notExisting", new Course("Software Engineering 1"));
     }
 }
