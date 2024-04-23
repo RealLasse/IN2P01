@@ -20,8 +20,8 @@ public class CourseService {
                 .orElseThrow(() -> new CustomerNotFoundException(lastName));
 
         customer.addCourse(course);
-        customerRepository.save(customer);
         course.incrementAnzahlTeilnehmer();
+        customerRepository.save(customer);
     }
 
     @Transactional

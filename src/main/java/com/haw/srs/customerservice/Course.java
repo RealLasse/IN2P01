@@ -11,8 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-@Getter
-//@Data
+@Data
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Course {
 
@@ -22,6 +21,7 @@ public class Course {
 
     private String name;
 
+    @Getter
     private Integer anzahlTeilnehmer;
 
     public Course(String name) {
@@ -34,7 +34,7 @@ public class Course {
     }
 
     public void decrementAnzahlTeilnehmer() {
-        if (anzahlTeilnehmer > 0) {
+        if (anzahlTeilnehmer == 0) {
             throw new IllegalArgumentException("Number of persons in a course may not be negative.");
         }
         anzahlTeilnehmer--;
