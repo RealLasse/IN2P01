@@ -50,6 +50,7 @@ class CourseServiceTest {
 
     @Test
     void enrollCustomerInCourseFailBecauseOfCustomerNotFound() {
+
         assertThatExceptionOfType(CustomerNotFoundException.class)
                 .isThrownBy(() -> courseService.enrollInCourse("notExisting", new Course("Software Engineering 1")))
                 .withMessageContaining("Could not find customer with lastname notExisting.");
@@ -78,35 +79,41 @@ class CourseServiceTest {
     @Test
     void cancelMembershipSuccess() throws CustomerNotFoundException, CourseNotFoundException, MembershipMailNotSent {
         // set up customer and course here
-        // ...
+        Customer customer = new Customer("Lasse", "Bake", Gender.MALE);
+        customer.addCourse(new Course("Software Engineering 1"));
+        customerRepository.save(customer);
 
         // configure MailGateway-mock
         when(mailGateway.sendMail(anyString(), anyString(), anyString())).thenReturn(true);
 
-        courseService.cancelMembership("notExisting", new Course("Software Engineering 1"));
+        courseService.cancelMembership("Bake", new Course("Software Engineering 1"));
     }
 
     @Test
     void cancelMembershipFailBecauseOfUnableToSendMail() {
         // set up customer and course here
-        // ...
+        Customer from = new Customer("FirstName", "LastName", Gender.MALE);
+        from.addCourse(new Course("Software Engineering 1"));
+        customerRepository.save(from);
 
         // configure MailGateway-mock
         when(mailGateway.sendMail(anyString(), anyString(), anyString())).thenReturn(false);
 
         assertThatExceptionOfType(MembershipMailNotSent.class)
-                .isThrownBy(() -> courseService.cancelMembership("notExisting", new Course("Software Engineering 1")))
+                .isThrownBy(() -> courseService.cancelMembership("LastName", new Course("Software Engineering 1")))
                 .withMessageContaining("Could not send membership mail to");
     }
     
     @Test
     void cancelMembershipSuccessBDDStyle() throws CustomerNotFoundException, CourseNotFoundException, MembershipMailNotSent {
         // set up customer and course here
-        // ...
+        Customer customer = new Customer("Lotta", "Wiedemann", Gender.MALE);
+        customer.addCourse(new Course("Software Engineering 1"));
+        customerRepository.save(customer);
 
         // configure MailGateway-mock with BDD-style
         given(mailGateway.sendMail(anyString(), anyString(), anyString())).willReturn(true);
 
-        courseService.cancelMembership("notExisting", new Course("Software Engineering 1"));
+        courseService.cancelMembership("Wiedemann", new Course("Software Engineering 1"));
     }
 }
